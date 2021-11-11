@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mqtt_broker:
+    image: eclipse-mosquitto
+    restart: unless-stopped
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+  client1:
+    depends_on:
+      - mqtt_broker
+    image: johnwid92/mqtt-dummy-client
+    restart: unless-stopped
+    environment:
+      - CLIENT_ID=client1
+      - PUB_TOPIC=/client2
+      - SUB_TOPIC=/client1
+  client2:
+    depends_on:
+      - mqtt_broker
+    image: johnwid92/mqtt-dummy-client
+    restart: unless-stopped
+    environment:
+      - CLIENT_ID=client2
+      - PUB_TOPIC=/client1
+      - SUB_TOPIC=/client2
